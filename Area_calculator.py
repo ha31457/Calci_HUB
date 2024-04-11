@@ -79,14 +79,14 @@ def rec():
 
     ans = L*W
     Ans = Label(Area, text=f'The area of rectangle with length {L} and width {W} is {ans}', font=('Verdana',25))
-    Ans.place_configure(x=200, y=450)
+    Ans.place_configure(x=200, y=550)
 
 def tri():
     B = int(b.get())
     H = int(h.get())
     ans = 0.5*B*H
     Ans = Label(Area, text=f'The area of triangle with base {B}and height {H} is {ans}', font=('Verdana',25))
-    Ans.place_configure(x=200, y=450)
+    Ans.place_configure(x=200, y=550)
         
 WC = Label(Area, text='Welcome to the Area calculator !!!',font=('forte', 30))
 WC.place_configure(x=330,y = 20)
