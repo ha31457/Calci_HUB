@@ -11,7 +11,7 @@ def cal_CI():
     r = float(RE.get())
     t = float(TE.get())
 
-    ans = ((p*(1+r)**t)-p)
+    ans = p*((1+r)**t)
 
     ANS = Label(CI, text=f'The compound interest of amount {p} for {t} years at {r}% rate of interest is {ans}',font=('Aeiral', 20))
     ANS.place_configure(x = 150, y=550)

@@ -18,7 +18,7 @@ def display():
         L1.place_configure(x=150, y=250)
         
         global R
-        R = Entry(font=('Verdana',25),width=10)
+        R = Entry(Area,font=('Verdana',25),width=10)
         R.place_configure(x = 1000, y=250)
         Submit = Button(Area, text='Submit',font=('Verdana',25),command=cir).place_configure(x=600, y=320)
 
@@ -26,7 +26,7 @@ def display():
         L1 = Label(Area , text='Please enter the side of the square : ',font=('Verdana',25))
         L1.place_configure(x=150, y=250)
         global s
-        s = Entry(font=('Verdana',25),width=10)
+        s = Entry(Area,font=('Verdana',25),width=10)
         s.place_configure(x = 1000, y=250)
         Submit = Button(Area, text='Submit',font=('Verdana',25),command=sqr).place_configure(x=600, y=320)
 
@@ -34,11 +34,11 @@ def display():
         L1 = Label(Area, text='Enter the length of the rectangle :', font=('Verdana', 25))
         L1.place_configure(x=150, y=250)
         global l , w
-        l = Entry(font=('Verdana',25),width=10)
+        l = Entry(Area,font=('Verdana',25),width=10)
         l.place_configure(x = 1000, y=250)
         L2 = Label(Area, text='Enter the width of the rectangle : ',font=('Verdana', 25))
         L2.place_configure(x=150, y=350)
-        w = Entry(font=('Verdana', 25),width=10)
+        w = Entry(Area,font=('Verdana', 25),width=10)
         w.place_configure(x = 1000, y=350)
         Submit = Button(Area, text='Submit',font=('Verdana',25),command=rec).place_configure(x=600, y=450)
 
@@ -46,11 +46,11 @@ def display():
         L1 = Label(Area, text='Enter the base of the triangle :', font=('Verdana', 25))
         L1.place_configure(x=150, y=250)
         global b,h
-        b = Entry(font=('Verdana',25))
+        b = Entry(Area,font=('Verdana',25))
         b.place_configure(x = 1000, y=250)
         L2 = Label(Area, text='Enter the height of the triangle : ',font=('Verdana', 25))
         L2.place_configure(x=150, y=350)
-        h = Entry(font=('Verdana', 25))
+        h = Entry(Area,font=('Verdana', 25))
         h.place_configure(x = 1000, y=350)
         Submit = Button(Area, text='Submit',font=('Verdana',25),command=tri).place_configure(x=600, y=450)
     
