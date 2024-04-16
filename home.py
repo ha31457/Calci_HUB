@@ -5,6 +5,7 @@ import math
 window = Tk()
 window.title('Calci Hub')
 window.state('zoomed')
+window.iconbitmap('calci.ico')
 
 ACTIVE = []
 
@@ -186,7 +187,7 @@ def compound_interest():
         Cal.config(state='disabled')
 
     #Welcome message
-    WC = Label(CI, text='Welcome to the Compound interest calculator ',font=('forte', 30))
+    WC = Label(CI, text='Welcome to the Compound interest calculator ',font=('Verdana', 30))
     WC.place_configure(x=250,y = 20)
 
     #Principal 
@@ -219,7 +220,7 @@ def fixed_deposit():
         window.withdraw()
     ACTIVE.clear()
     SI = Toplevel()
-    SI.title("Simple Interest calculator ")
+    SI.title("Fixed Deposit calculator ")
     SI.geometry("1300x650+230+135")
     SI.config(background="black")
 
@@ -232,12 +233,12 @@ def fixed_deposit():
 
         ans = (p*r*t)/100
 
-        ANS = Label(SI, text=f'The simple interest of amount {p} for {t} years at {r}% rate of interest is {ans}',font=('Aeiral', 20))
+        ANS = Label(SI, text=f'The interest of amount {p} for {t} years at {r}% rate of interest is {ans}',font=('Aeiral', 20))
         ANS.place_configure(x = 150, y=550)
         Cal.config(state='disabled')
 
     #Welcome message
-    WC = Label(SI, text='Welcome to the Simple interest calculator !!!',font=('forte', 30))
+    WC = Label(SI, text='Welcome to the fixed deposit calculator !!!',font=('Verdana', 30))
     WC.place_configure(x=250,y = 20)
 
     #Principal 
@@ -357,14 +358,14 @@ def Area_calci():
         Ans = Label(Area, text=f'The area of triangle with base {B}and height {H} is {ans}', font=('Verdana',25))
         Ans.place_configure(x=200, y=550)
             
-    WC = Label(Area, text='Welcome to the Area calculator !!!',font=('forte', 30))
+    WC = Label(Area, text='Welcome to the Area calculator !!!',font=('Verdana', 30))
     WC.place_configure(x=330,y = 20)
 
     SEL = Label(Area, text='Select the shape of your choice to find area ',font=('Verdana',25))
     SEL.place_configure(x = 110, y=120)
 
     val = ['Select','Circle', 'Square', 'Rectangle', 'Triangle']
-    Selector = Combobox(Area, values=val)
+    Selector = Combobox(Area, values=val,font=('Verdana',18))
     Selector.current(0)
     Selector.place_configure(x=1020,y = 120,height=50,width=150)
 
@@ -409,7 +410,7 @@ def E_bill_calci():
         ANS = Label(bill, text=f'The total bill with use of {unit} units is {ans}', font=('Verdana',25))
         ANS.place_configure(x=280,y=370)
 
-    WC = Label(bill, text='Welcome to the Electricity bill calculator !!!',font=('forte', 30))
+    WC = Label(bill, text='Welcome to the Electricity bill calculator !!!',font=('Verdana', 30))
     WC.place_configure(x=250,y = 20)
 
     UL = Label(bill, text='Enter the units used in the month : ', font=('Verdana',25))
