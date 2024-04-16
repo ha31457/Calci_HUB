@@ -6,11 +6,13 @@ window = Tk()
 window.title('Calci Hub')
 window.state('zoomed')
 
-heading = Label(window, text="Calci Hub", font=('Forte', 50))
-heading.place_configure(x=700,y=20)
+ACTIVE = []
 
-sideBar = Frame(window, background="gray", width=window.winfo_width() - 1300, height=window.winfo_height(), borderwidth=5)
-sideBar.place_configure(x=10,y=150)
+def mouse_hover(btn):
+    btn.config(background="#FFFFFF")
+def mouse_out(btn):
+    btn.config(background="#DDDDDD")
+
 
 def simple_calci():
     SCREEN_WIDTH = 1300
@@ -30,130 +32,129 @@ def simple_calci():
     SC.configure(bg="black")
 
 
-    def appendValue(value):
-        
-        global exp, ExpressionDisplay
-        
+    def appendValue(value, expressionHandle):
         if(value == ""):
-            exp = ""
+            expressionHandle[0] = ""
         else:
-            exp += value
-        ExpressionDisplay.place_forget()
-        ExpressionDisplay = Label(SC, text=exp, font=("Aerial", FONT_SIZE+15))
-        ExpressionDisplay.place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(exp))*len(exp) , y=0.13*SCREEN_HEIGHT)
+            expressionHandle[0] += value
+        expressionHandle[1].place_forget()
+        expressionHandle[1] = Label(SC, text=expressionHandle[0], font=("Aerial", FONT_SIZE+15))
+        expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(expressionHandle[0]))*len(expressionHandle[0]) , y=0.13*SCREEN_HEIGHT)
 
     def evaluate():
         prevIndexCarryForward = 0
-        global exp,ExpressionDisplay
-        for i in range(0, len(exp)):
+
+        for i in range(0, len(expressionHandle[0])):
             try:
-                if exp[i] == "X":
-                    operand1 = float(exp[prevIndexCarryForward:i-1])
-                    operand2 = float(exp[i+2: len(exp)])
+                if expressionHandle[0][i] == "X":
+                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
                     result = operand1 * operand2
-                    exp = str(result)
+                    expressionHandle[0] = str(result)
                     break
 
-                elif exp[i] == "/":
-                    operand1 = float(exp[prevIndexCarryForward:i-1])
-                    operand2 = float(exp[i+2: len(exp)])
+                elif expressionHandle[0][i] == "/":
+                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
                     result = operand1 / operand2
-                    exp = str(result)
+                    expressionHandle[0] = str(result)
                     break
 
-                elif exp[i] == "+":
-                    operand1 = float(exp[prevIndexCarryForward:i-1])
-                    operand2 = float(exp[i+2: len(exp)])
+                elif expressionHandle[0][i] == "+":
+                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
                     result = operand1 + operand2
-                    exp = str(result)
+                    expressionHandle[0] = str(result)
                     break
 
-                elif exp[i] == "-":
-                    operand1 = float(exp[prevIndexCarryForward:i-1])
-                    operand2 = float(exp[i+2: len(exp)])
+                elif expressionHandle[0][i] == "-":
+                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
                     result = operand1 - operand2
-                    exp = str(result)
+                    expressionHandle[0] = str(result)
                     break
                 
-            except:
-                exp = "Syntax Error"
+            except Exception as e:
+                print(e)
+                expressionHandle[0] = "Syntax Error"
 
             finally:
-                ExpressionDisplay.place_forget()
-                ExpressionDisplay = Label(SC, text=exp, font=("Aerial", FONT_SIZE+15))
-                ExpressionDisplay.place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(exp))*len(exp) , y=0.13*SCREEN_HEIGHT)
+                expressionHandle[1].place_forget()
+                expressionHandle[1] = Label(SC, text=expressionHandle[0], font=("Aerial", FONT_SIZE+15))
+                expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(expressionHandle[0]))*len(expressionHandle[0]) , y=0.13*SCREEN_HEIGHT)
 
     L = Label(SC, text="Welcome to the calculator App !!!", font=("Aerial", FONT_SIZE, "bold"), width=30)
     L.place_configure(x=SCREEN_WIDTH//2 - 0.175*SCREEN_WIDTH , y=0.01*SCREEN_HEIGHT)
 
     exp = "harsh"
-
     ExpressionDisplay = Label(SC, text=exp, font=("Aerial", FONT_SIZE+15))
-    ExpressionDisplay.place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH , y=0.13*SCREEN_HEIGHT)
+
+    expressionHandle = [exp, ExpressionDisplay]
+    expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH , y=0.13*SCREEN_HEIGHT)
 
     # row = 0
     startX = (INITIAL_PADDING_X + SCREEN_WIDTH - 4*BTN_WIDTH - SPACING_X)//4
     startY = (INITIAL_PADDING_Y + SCREEN_HEIGHT - 4*FONT_SIZE - SPACING_Y)//4
 
-    Cancel = Button(SC, text="C", font=("Aerial", FONT_SIZE), fg="red", width=BTN_WIDTH, command=lambda: appendValue(""))
+    Cancel = Button(SC, text="C", font=("Aerial", FONT_SIZE), fg="red", width=BTN_WIDTH, command=lambda: appendValue("", expressionHandle))
     Cancel.place_configure(x=startX, y=startY)
 
-    Brackets = Button(SC, text="()", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("()"))
+    Brackets = Button(SC, text="()", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("()", expressionHandle))
     Brackets.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY)
 
-    Modulo = Button(SC, text="%", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" % "))
+    Modulo = Button(SC, text="%", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" % ", expressionHandle))
     Modulo.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY)
 
-    Divide = Button(SC, text="/", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" / "))
+    Divide = Button(SC, text="/", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" / ", expressionHandle))
     Divide.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY)
 
     # #row = 1
-    nine = Button(SC, text="9", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("9"))
+    nine = Button(SC, text="9", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("9", expressionHandle))
     nine.place_configure(x=startX, y=startY + FONT_SIZE + SPACING_Y)
 
-    Eight = Button(SC, text="8", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("8"))
+    Eight = Button(SC, text="8", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("8", expressionHandle))
     Eight.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + FONT_SIZE + SPACING_Y)
 
-    Seven = Button(SC, text="7", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("7"))
+    Seven = Button(SC, text="7", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("7", expressionHandle))
     Seven.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + FONT_SIZE + SPACING_Y)
 
-    Multiply = Button(SC, text="X", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" X "))
+    Multiply = Button(SC, text="X", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" X ", expressionHandle))
     Multiply.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY + FONT_SIZE + SPACING_Y)
 
     # #row = 2
-    Six = Button(SC, text="6", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("6"))
+    Six = Button(SC, text="6", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("6", expressionHandle))
     Six.place_configure(x=startX, y=startY + 2*(FONT_SIZE + SPACING_Y))
 
-    Five = Button(SC, text="5", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("5"))
+    Five = Button(SC, text="5", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("5", expressionHandle))
     Five.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + 2*(FONT_SIZE + SPACING_Y))
 
-    Four = Button(SC, text="4", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("4"))
+    Four = Button(SC, text="4", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("4", expressionHandle))
     Four.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + 2*(FONT_SIZE + SPACING_Y))
 
-    Subtract = Button(SC, text="-", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" - "))
+    Subtract = Button(SC, text="-", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" - ", expressionHandle))
     Subtract.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY + 2*(FONT_SIZE + SPACING_Y))
 
     # #row = 3
-    Three = Button(SC, text="3", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("3"))
+    Three = Button(SC, text="3", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("3", expressionHandle))
     Three.place_configure(x=startX, y=startY + 3*(FONT_SIZE + SPACING_Y))
 
-    Two = Button(SC, text="2", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("2"))
+    Two = Button(SC, text="2", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("2", expressionHandle))
     Two.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + 3*(FONT_SIZE + SPACING_Y))
 
-    One = Button(SC, text="1", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("1"))
+    One = Button(SC, text="1", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("1", expressionHandle))
     One.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + 3*(FONT_SIZE + SPACING_Y))
 
-    Add = Button(SC, text="+", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" + "))
+    Add = Button(SC, text="+", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" + ", expressionHandle))
     Add.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY + 3*(FONT_SIZE + SPACING_Y))
 
     # #row = 4
-    plusMinus = Button(SC, text="+/-", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("-+"))
+    plusMinus = Button(SC, text="+/-", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("-+", expressionHandle))
     plusMinus.place_configure(x=startX, y=startY + 4*(FONT_SIZE + SPACING_Y))
 
-    Zero = Button(SC, text="0", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("0"))
+    Zero = Button(SC, text="0", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("0", expressionHandle))
     Zero.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + 4*(FONT_SIZE + SPACING_Y))
 
-    Point = Button(SC, text=".", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("."))
+    Point = Button(SC, text=".", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(".", expressionHandle))
     Point.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + 4*(FONT_SIZE + SPACING_Y))
 
     Equals = Button(SC, text="=", font=("Aerial", FONT_SIZE),bg="green",fg="white", width=BTN_WIDTH, command=evaluate)
@@ -162,13 +163,16 @@ def simple_calci():
     SC.mainloop()
 
 def compound_interest():
-    #((P*(1+r)^n)-P)
-
-
+    
+    for window in ACTIVE:
+        window.withdraw()
+    ACTIVE.clear()
     CI = Toplevel()
     CI.title('Compound interest calculator')
     CI.geometry('1300x650+230+135')
     CI.config(background='black')
+
+    ACTIVE.append(CI)
 
     def cal_CI():
         p = float(PE.get())
@@ -211,10 +215,15 @@ def compound_interest():
     CI.mainloop()
 
 def fixed_deposit():
+    for window in ACTIVE:
+        window.withdraw()
+    ACTIVE.clear()
     SI = Toplevel()
     SI.title("Simple Interest calculator ")
     SI.geometry("1300x650+230+135")
     SI.config(background="black")
+
+    ACTIVE.append(SI)
 
     def cal_SI():
         p = float(PE.get())
@@ -256,10 +265,16 @@ def fixed_deposit():
     SI.mainloop()
 
 def Area_calci():
+
+    for window in ACTIVE:
+        window.withdraw()
+    ACTIVE.clear()
     Area = Toplevel()
     Area.geometry('1300x650+230+135')
     Area.title('Area Calculator')
     Area.config(background='black')
+
+    ACTIVE.append(Area)
 
     def display():
         
@@ -360,10 +375,16 @@ def Area_calci():
     Area.mainloop()
 
 def E_bill_calci():
+
+    for window in ACTIVE:
+        window.withdraw()
+    ACTIVE.clear()
     bill = Toplevel()
     bill.geometry('1300x650+230+135')
     bill.title('Electricity bill calculator')
     bill.configure(background='black')
+
+    ACTIVE.append(bill)
 
     def calcu():
         UE.config(state='disabled')
@@ -403,16 +424,39 @@ def E_bill_calci():
 
     bill.mainloop()
 
-B1 = Button(sideBar, text="simple calc", font=('Calibri', 20), borderwidth=10,width=13,command=simple_calci )
-B1.pack(pady=20,padx=10)
-B1 = Button(sideBar, text="Compound interest ", font=('Calibri', 20), borderwidth=10,width=13 ,command=compound_interest)
-B1.pack(pady=20,padx=10)
-B1 = Button(sideBar, text="Fixed deposit", font=('Calibri', 20), borderwidth=10,width=13,command=fixed_deposit )
-B1.pack(pady=20,padx=10)
-B1 = Button(sideBar, text="Area Calculator", font=('Calibri', 20), borderwidth=10,width=13,command=Area_calci)
-B1.pack(pady=20,padx=10)
-B1 = Button(sideBar, text="E Bill calculator", font=('Calibri', 20), borderwidth=10,width=13,command=E_bill_calci )
-B1.pack(pady=20,padx=10)
 
+
+title = Frame(window, background="gray", width=window.winfo_width() - 1300, height=window.winfo_height(), borderwidth=5)
+# title.place_configure(x=0,y=0)
+title.grid(row=0, column=0)
+
+heading = Label(title, text="Calci Hub", font=('Forte', 50), background="gray")
+heading.grid(row=0, column=1, padx=700)
+
+sideBar = Frame(window, background="gray", width=window.winfo_width() - 1300, height=window.winfo_height(), borderwidth=5)
+# sideBar.place_configure(x=10,y=150)
+sideBar.grid(row=1,column=0, sticky="W", pady=15, padx=5)
+
+B1 = Button(sideBar, text="Simple", font=('Calibri', 20), borderwidth=10,width=13,command=simple_calci, )
+B1.pack(pady=20,padx=5)
+B2 = Button(sideBar, text="Compound", font=('Calibri', 20), borderwidth=10,width=13 ,command=compound_interest, )
+B2.pack(pady=20,padx=5)
+B3 = Button(sideBar, text="Fixed Deposit", font=('Calibri', 20), borderwidth=10,width=13,command=fixed_deposit, )
+B3.pack(pady=20,padx=5)
+B4 = Button(sideBar, text="Area", font=('Calibri', 20), borderwidth=10,width=13,command=Area_calci, )
+B4.pack(pady=20,padx=5)
+B5 = Button(sideBar, text="E Bill", font=('Calibri', 20), borderwidth=10,width=13,command=E_bill_calci, )
+B5.pack(pady=20,padx=5)
+
+B1.bind("<Enter>", lambda e: mouse_hover(B1))
+B1.bind("<Leave>", lambda e: mouse_out(B1))
+B2.bind("<Enter>", lambda e: mouse_hover(B2))
+B2.bind("<Leave>", lambda e: mouse_out(B2))
+B3.bind("<Enter>", lambda e: mouse_hover(B3))
+B3.bind("<Leave>", lambda e: mouse_out(B3))
+B4.bind("<Enter>", lambda e: mouse_hover(B4))
+B4.bind("<Leave>", lambda e: mouse_out(B4))
+B5.bind("<Enter>", lambda e: mouse_hover(B5))
+B5.bind("<Leave>", lambda e: mouse_out(B5))
 
 window.mainloop()
