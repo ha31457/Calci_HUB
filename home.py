@@ -9,13 +9,17 @@ window.iconbitmap('calci.ico')
 
 ACTIVE = []
 
-def mouse_hover(btn):
-    btn.config(background="#FFFFFF")
-def mouse_out(btn):
-    btn.config(background="#DDDDDD")
+def mouse_hover(widget, color="#FFFFFF"):
+    widget.config(background=color)
+def mouse_out(widget, color="#DDDDDD"):
+    widget.config(background=color)
 
 
 def simple_calci():
+    for window in ACTIVE:
+        window.withdraw()
+    ACTIVE.clear()
+
     SCREEN_WIDTH = 1300
     BTN_WIDTH = 5
     SPACING_X = 111
@@ -32,8 +36,9 @@ def simple_calci():
     SC.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}+230+125")
     SC.configure(bg="black")
 
+    ACTIVE.append(SC)
 
-    def appendValue(value, expressionHandle):
+    def appendValue(value):
         if(value == ""):
             expressionHandle[0] = ""
         else:
@@ -42,47 +47,80 @@ def simple_calci():
         expressionHandle[1] = Label(SC, text=expressionHandle[0], font=("Aerial", FONT_SIZE+15))
         expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(expressionHandle[0]))*len(expressionHandle[0]) , y=0.13*SCREEN_HEIGHT)
 
+    def delete():
+        expressionHandle[0] = expressionHandle[0][0 : len(expressionHandle[0])-1]
+        expressionHandle[1].place_forget()
+        expressionHandle[1] = Label(SC, text=expressionHandle[0], font=("Aerial", FONT_SIZE+15))
+        expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(expressionHandle[0]))*len(expressionHandle[0]) , y=0.13*SCREEN_HEIGHT)
+
     def evaluate():
         prevIndexCarryForward = 0
+        exp = expressionHandle[0]
+        try:
+            if("SQRT" in expressionHandle[0]):
+                try:
+                    operand = float(expressionHandle[0][5:len(expressionHandle[0])])
+                except:
+                    try:
+                        operand = float(expressionHandle[0][0:expressionHandle[0].index("S")])
+                    except:
+                        print("error")
+                result = math.sqrt(operand)
+                expressionHandle[0] = str(result)
 
-        for i in range(0, len(expressionHandle[0])):
-            try:
-                if expressionHandle[0][i] == "X":
-                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
-                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
-                    result = operand1 * operand2
-                    expressionHandle[0] = str(result)
-                    break
+            else:
+                for i in range(0, len(expressionHandle[0])):
+                    if expressionHandle[0][i] == "X":
+                        operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                        operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
+                        result = operand1 * operand2
+                        expressionHandle[0] = str(result)
+                        break
 
-                elif expressionHandle[0][i] == "/":
-                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
-                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
-                    result = operand1 / operand2
-                    expressionHandle[0] = str(result)
-                    break
+                    elif expressionHandle[0][i] == "/":
+                        operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                        operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
+                        result = operand1 / operand2
+                        expressionHandle[0] = str(result)
+                        break
 
-                elif expressionHandle[0][i] == "+":
-                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
-                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
-                    result = operand1 + operand2
-                    expressionHandle[0] = str(result)
-                    break
+                    elif expressionHandle[0][i] == "+":
+                        operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                        operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
+                        result = operand1 + operand2
+                        expressionHandle[0] = str(result)
+                        break
 
-                elif expressionHandle[0][i] == "-":
-                    operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
-                    operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
-                    result = operand1 - operand2
-                    expressionHandle[0] = str(result)
-                    break
+                    elif expressionHandle[0][i] == "-":
+                        operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                        operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
+                        result = operand1 - operand2
+                        expressionHandle[0] = str(result)
+                        break
+
+                    elif expressionHandle[0][i] == "%":
+                        operand1 = float(expressionHandle[0][prevIndexCarryForward:i-1])
+                        operand2 = float(expressionHandle[0][i+2: len(expressionHandle[0])])
+                        result = operand1 % operand2
+                        expressionHandle[0] = str(result)
+                        break
+
                 
-            except Exception as e:
-                print(e)
-                expressionHandle[0] = "Syntax Error"
+        except Exception as e:
+            print(e)
+            expressionHandle[0] = "Syntax Error"
 
-            finally:
-                expressionHandle[1].place_forget()
-                expressionHandle[1] = Label(SC, text=expressionHandle[0], font=("Aerial", FONT_SIZE+15))
-                expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(expressionHandle[0]))*len(expressionHandle[0]) , y=0.13*SCREEN_HEIGHT)
+        finally:
+            expressionHandle[1].place_forget()
+            expressionHandle[1] = Label(SC, text=expressionHandle[0], font=("Aerial", FONT_SIZE+15))
+            expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH - (FONT_SIZE/55*len(expressionHandle[0]))*len(expressionHandle[0]) , y=0.13*SCREEN_HEIGHT)
+            value = f"{exp} = {expressionHandle[0]}"
+            with open("history.txt", "a") as f:
+                f.write(f'''
+{value}''')
+            
+                Label(historyFrame, text=value, font=("Arial", FONT_SIZE-10)).pack()
+
 
     L = Label(SC, text="Welcome to the calculator App !!!", font=("Aerial", FONT_SIZE, "bold"), width=30)
     L.place_configure(x=SCREEN_WIDTH//2 - 0.175*SCREEN_WIDTH , y=0.01*SCREEN_HEIGHT)
@@ -93,73 +131,133 @@ def simple_calci():
     expressionHandle = [exp, ExpressionDisplay]
     expressionHandle[1].place_configure(x=SCREEN_WIDTH//2 - 0.03*SCREEN_WIDTH , y=0.13*SCREEN_HEIGHT)
 
+    with open("history.txt", "r") as f:
+        historyList = f.readlines()
+
     # row = 0
     startX = (INITIAL_PADDING_X + SCREEN_WIDTH - 4*BTN_WIDTH - SPACING_X)//4
     startY = (INITIAL_PADDING_Y + SCREEN_HEIGHT - 4*FONT_SIZE - SPACING_Y)//4
 
-    Cancel = Button(SC, text="C", font=("Aerial", FONT_SIZE), fg="red", width=BTN_WIDTH, command=lambda: appendValue("", expressionHandle))
+    historyFrame = Frame(SC)
+    historyFrame.place_configure(x=SPACING_X-32.9, y=startY)
+
+    historyFrame.bind("<Enter>", lambda e: mouse_hover(historyFrame, color="#FEFEFE"))
+    historyFrame.bind("<Leave>", lambda e: mouse_out(historyFrame, color="#EEEEEE"))
+
+    Label(historyFrame, text="HISTORY", font=("Arial", FONT_SIZE+5, "bold")).pack()
+
+
+    for i in range(len(historyList)):
+        value = historyList[i]
+        value = value[0:len(value)-1]
+        Label(historyFrame, text=value, font=("Arial", FONT_SIZE-10)).pack()
+
+    Cancel = Button(SC, text="C", font=("Aerial", FONT_SIZE), fg="red", width=BTN_WIDTH, command=lambda: appendValue(""))
     Cancel.place_configure(x=startX, y=startY)
 
-    Brackets = Button(SC, text="()", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("()", expressionHandle))
-    Brackets.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY)
+    sqRoot = Button(SC, text="SQRT", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("SQRT "))
+    sqRoot.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY)
 
-    Modulo = Button(SC, text="%", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" % ", expressionHandle))
+    Modulo = Button(SC, text="%", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" % "))
     Modulo.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY)
 
-    Divide = Button(SC, text="/", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" / ", expressionHandle))
+    Divide = Button(SC, text="/", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" / "))
     Divide.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY)
 
     # #row = 1
-    nine = Button(SC, text="9", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("9", expressionHandle))
-    nine.place_configure(x=startX, y=startY + FONT_SIZE + SPACING_Y)
+    Nine = Button(SC, text="9", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("9"))
+    Nine.place_configure(x=startX, y=startY + FONT_SIZE + SPACING_Y)
 
-    Eight = Button(SC, text="8", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("8", expressionHandle))
+    Eight = Button(SC, text="8", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("8"))
     Eight.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + FONT_SIZE + SPACING_Y)
 
-    Seven = Button(SC, text="7", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("7", expressionHandle))
+    Seven = Button(SC, text="7", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("7"))
     Seven.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + FONT_SIZE + SPACING_Y)
 
-    Multiply = Button(SC, text="X", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" X ", expressionHandle))
+    Multiply = Button(SC, text="X", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" X "))
     Multiply.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY + FONT_SIZE + SPACING_Y)
 
     # #row = 2
-    Six = Button(SC, text="6", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("6", expressionHandle))
+    Six = Button(SC, text="6", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("6"))
     Six.place_configure(x=startX, y=startY + 2*(FONT_SIZE + SPACING_Y))
 
-    Five = Button(SC, text="5", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("5", expressionHandle))
+    Five = Button(SC, text="5", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("5"))
     Five.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + 2*(FONT_SIZE + SPACING_Y))
 
-    Four = Button(SC, text="4", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("4", expressionHandle))
+    Four = Button(SC, text="4", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("4"))
     Four.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + 2*(FONT_SIZE + SPACING_Y))
 
-    Subtract = Button(SC, text="-", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" - ", expressionHandle))
+    Subtract = Button(SC, text="-", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" - "))
     Subtract.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY + 2*(FONT_SIZE + SPACING_Y))
 
     # #row = 3
-    Three = Button(SC, text="3", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("3", expressionHandle))
+    Three = Button(SC, text="3", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("3"))
     Three.place_configure(x=startX, y=startY + 3*(FONT_SIZE + SPACING_Y))
 
-    Two = Button(SC, text="2", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("2", expressionHandle))
+    Two = Button(SC, text="2", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("2"))
     Two.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + 3*(FONT_SIZE + SPACING_Y))
 
-    One = Button(SC, text="1", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("1", expressionHandle))
+    One = Button(SC, text="1", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("1"))
     One.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + 3*(FONT_SIZE + SPACING_Y))
 
-    Add = Button(SC, text="+", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" + ", expressionHandle))
+    Add = Button(SC, text="+", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(" + "))
     Add.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY + 3*(FONT_SIZE + SPACING_Y))
 
     # #row = 4
-    plusMinus = Button(SC, text="+/-", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("-+", expressionHandle))
-    plusMinus.place_configure(x=startX, y=startY + 4*(FONT_SIZE + SPACING_Y))
+    Del = Button(SC, text="DEL", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=delete)
+    Del.place_configure(x=startX, y=startY + 4*(FONT_SIZE + SPACING_Y))
 
-    Zero = Button(SC, text="0", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("0", expressionHandle))
+    Zero = Button(SC, text="0", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("0"))
     Zero.place_configure(x=startX + BTN_WIDTH + SPACING_X, y=startY + 4*(FONT_SIZE + SPACING_Y))
 
-    Point = Button(SC, text=".", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue(".", expressionHandle))
+    Point = Button(SC, text=".", font=("Aerial", FONT_SIZE), width=BTN_WIDTH, command=lambda: appendValue("."))
     Point.place_configure(x=startX + 2*(BTN_WIDTH + SPACING_X), y=startY + 4*(FONT_SIZE + SPACING_Y))
 
     Equals = Button(SC, text="=", font=("Aerial", FONT_SIZE),bg="green",fg="white", width=BTN_WIDTH, command=evaluate)
     Equals.place_configure(x=startX + 3*(BTN_WIDTH + SPACING_X), y=startY + 4*(FONT_SIZE + SPACING_Y))
+
+
+    Cancel.bind("<Enter>", lambda e: mouse_hover(Cancel))
+    Cancel.bind("<Leave>", lambda e: mouse_out(Cancel))
+    sqRoot.bind("<Enter>", lambda e: mouse_hover(sqRoot))
+    sqRoot.bind("<Leave>", lambda e: mouse_out(sqRoot))
+    Modulo.bind("<Enter>", lambda e: mouse_hover(Modulo))
+    Modulo.bind("<Leave>", lambda e: mouse_out(Modulo))
+    Divide.bind("<Enter>", lambda e: mouse_hover(Divide))
+    Divide.bind("<Leave>", lambda e: mouse_out(Divide))
+    Nine.bind("<Enter>", lambda e: mouse_hover(Nine))
+    Nine.bind("<Leave>", lambda e: mouse_out(Nine))
+    Eight.bind("<Enter>", lambda e: mouse_hover(Eight))
+    Eight.bind("<Leave>", lambda e: mouse_out(Eight))
+    Seven.bind("<Enter>", lambda e: mouse_hover(Seven))
+    Seven.bind("<Leave>", lambda e: mouse_out(Seven))
+    Multiply.bind("<Enter>", lambda e: mouse_hover(Multiply))
+    Multiply.bind("<Leave>", lambda e: mouse_out(Multiply))
+    Six.bind("<Enter>", lambda e: mouse_hover(Six))
+    Six.bind("<Leave>", lambda e: mouse_out(Six))
+    Five.bind("<Enter>", lambda e: mouse_hover(Five))
+    Five.bind("<Leave>", lambda e: mouse_out(Five))
+    Four.bind("<Enter>", lambda e: mouse_hover(Four))
+    Four.bind("<Leave>", lambda e: mouse_out(Four))
+    Subtract.bind("<Enter>", lambda e: mouse_hover(Subtract))
+    Subtract.bind("<Leave>", lambda e: mouse_out(Subtract))
+    Three.bind("<Enter>", lambda e: mouse_hover(Three))
+    Three.bind("<Leave>", lambda e: mouse_out(Three))
+    Two.bind("<Enter>", lambda e: mouse_hover(Two))
+    Two.bind("<Leave>", lambda e: mouse_out(Two))
+    One.bind("<Enter>", lambda e: mouse_hover(One))
+    One.bind("<Leave>", lambda e: mouse_out(One))
+    Add.bind("<Enter>", lambda e: mouse_hover(Add))
+    Add.bind("<Leave>", lambda e: mouse_out(Add))
+    Del.bind("<Enter>", lambda e: mouse_hover(Del))
+    Del.bind("<Leave>", lambda e: mouse_out(Del))
+    Zero.bind("<Enter>", lambda e: mouse_hover(Zero))
+    Zero.bind("<Leave>", lambda e: mouse_out(Zero))
+    Point.bind("<Enter>", lambda e: mouse_hover(Point))
+    Point.bind("<Leave>", lambda e: mouse_out(Point))
+    Equals.bind("<Enter>", lambda e: mouse_hover(Equals, "#00AA00"))
+    Equals.bind("<Leave>", lambda e: mouse_out(Equals, "#009900"))
+
 
     SC.mainloop()
 
