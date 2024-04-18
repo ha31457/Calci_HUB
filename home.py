@@ -533,8 +533,9 @@ title.grid(row=0, column=0)
 heading = Label(title, text="Calci Hub", font=('Forte', 50), background="gray")
 heading.grid(row=0, column=1, padx=700)
 
-file = Image.open('logo.jpg')
-I = ImageTk.PhotoImage(file)
+file = Image.open('newlogo.jpg')
+resize_file = file.resize((100,100))
+I = ImageTk.PhotoImage(resize_file)
 img = Label(title,image=I)
 img.grid(row=0, column=0)
 
