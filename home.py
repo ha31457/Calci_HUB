@@ -1,6 +1,7 @@
 from tkinter import Tk, Frame, Button, Label,Entry,Toplevel
 from tkinter.ttk import Combobox
 import math
+from PIL import Image , ImageTk
 
 window = Tk()
 window.title('Calci Hub')
@@ -532,9 +533,15 @@ title.grid(row=0, column=0)
 heading = Label(title, text="Calci Hub", font=('Forte', 50), background="gray")
 heading.grid(row=0, column=1, padx=700)
 
+file = Image.open('logo.jpg')
+I = ImageTk.PhotoImage(file)
+img = Label(title,image=I)
+img.grid(row=0, column=0)
+
 sideBar = Frame(window, background="gray", width=window.winfo_width() - 1300, height=window.winfo_height(), borderwidth=5)
 # sideBar.place_configure(x=10,y=150)
 sideBar.grid(row=1,column=0, sticky="W", pady=15, padx=5)
+
 
 B1 = Button(sideBar, text="Simple", font=('Calibri', 20), borderwidth=10,width=13,command=simple_calci, )
 B1.pack(pady=20,padx=5)
@@ -546,6 +553,7 @@ B4 = Button(sideBar, text="Area", font=('Calibri', 20), borderwidth=10,width=13,
 B4.pack(pady=20,padx=5)
 B5 = Button(sideBar, text="E Bill", font=('Calibri', 20), borderwidth=10,width=13,command=E_bill_calci, )
 B5.pack(pady=20,padx=5)
+
 
 B1.bind("<Enter>", lambda e: mouse_hover(B1))
 B1.bind("<Leave>", lambda e: mouse_out(B1))
@@ -561,12 +569,13 @@ B5.bind("<Leave>", lambda e: mouse_out(B5))
 root = Toplevel()
 root.geometry('1300x650+230+135')
 root.title('slider')
+root.config(bg='burlywood')
 
 txt = "Welcome to Calci Hub. Your one stop solution for calculating !"
 count = 0
 text = ""
 
-label = Label(root, text=txt, font=('Verdana',25,'bold'), fg='black')
+label = Label(root, text=txt, font=('Verdana',25,'bold'), bg='burlywood')
 label.pack(pady=300)
 
 handler = [count, text]
