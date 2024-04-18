@@ -558,4 +558,33 @@ B4.bind("<Leave>", lambda e: mouse_out(B4))
 B5.bind("<Enter>", lambda e: mouse_hover(B5))
 B5.bind("<Leave>", lambda e: mouse_out(B5))
 
+root = Toplevel()
+root.geometry('1300x650+230+135')
+root.title('slider')
+
+txt = "Welcome to Calci Hub. Your one stop solution for calculating !"
+count = 0
+text = ""
+
+label = Label(root, text=txt, font=('Verdana',25,'bold'), fg='black')
+label.pack(pady=300)
+
+handler = [count, text]
+
+def slider():
+    if handler[0] >= len(txt):
+        handler[0] = -1
+        handler[1] = ''
+        label.config(text=handler[1])
+
+    else:
+        handler[1] = handler[1] + txt[handler[0]]
+        label.config(text=handler[1])
+    handler[0] += 1
+
+    label.after(150,slider)
+
+slider()
+root.mainloop()
+
 window.mainloop()
